@@ -1,0 +1,51 @@
+
+CREATE TABLE AccessLevels (AccessLevelID INT PRIMARY KEY,
+                           AccessLevelName VARCHAR(100));
+
+CREATE TABLE UserStatus (StatusID INT PRIMARY KEY, 
+                         StatusName VARCHAR(50));
+
+
+CREATE TABLE Users (UserID INT PRIMARY KEY IDENTITY(1,1),
+						Username VARCHAR(50) UNIQUE NOT NULL,
+						Password VARCHAR(255) NOT NULL, 
+						FirstName VARCHAR(100),
+						LastName VARCHAR(100),
+						Email VARCHAR(200) UNIQUE,
+						Contact_No VARCHAR(15),
+						AccessLevelID INT, 
+						StatusID INT, 
+						FOREIGN KEY (AccessLevelID) REFERENCES AccessLevels(AccessLevelID),
+						FOREIGN KEY (StatusID) REFERENCES UserStatus(StatusID));
+
+SELECT * FROM Users
+
+INSERT INTO UserStatus (StatusID, StatusName) VALUES (1, 'Active');
+INSERT INTO UserStatus (StatusID, StatusName) VALUES (2, 'Inactive');
+
+SELECT * FROM UserStatus
+
+
+INSERT INTO AccessLevels (AccessLevelID, AccessLevelName) VALUES (1, 'Admin');
+INSERT INTO AccessLevels (AccessLevelID, AccessLevelName) VALUES (2, 'Service');
+INSERT INTO AccessLevels (AccessLevelID, AccessLevelName) VALUES (3, 'Inventory');
+
+SELECT * FROM AccessLevels
+
+INSERT INTO Users (Username, Password, FirstName, LastName, Email, Contact_No, AccessLevelID, StatusID)
+VALUES ('jdoe', 'password123', 'John', 'Doe', 'jdoe@example.com', '12345678901', 1, 1);
+
+
+CREATE TABLE Clients (ClientID INT IDENTITY(1,1) PRIMARY KEY,
+					  UserID INT,
+					  FirstName VARCHAR(100),
+					  MiddleInitial CHAR(1),
+					  LastName VARCHAR(100),
+					  Email VARCHAR(100),
+					  Address VARCHAR(200),
+					  Contact_No VARCHAR(20),
+					  DateCreated DATETIME,
+					  CreatedBy INT,
+					  FOREIGN KEY (UserID) REFERENCES Users (UserID));
+
+
