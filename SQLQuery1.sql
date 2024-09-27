@@ -95,7 +95,8 @@ CREATE TABLE Casket (CasketID INT IDENTITY(1,1) PRIMARY KEY,
 					 Price DECIMAL(10, 2));	
 INSERT INTO Casket (CasketTypeID, CasketImage, CasketName, Price)VALUES (1, NULL, 'Classic Oak Casket', 600.00),
 																		(2, NULL, 'Stainless Steel Casket', 900.00);
-																		
+SELECT * FROM Casket
+												
 --For the Vehicle
 CREATE TABLE VehicleType (VehicleTypeID INT IDENTITY(1,1) PRIMARY KEY,
 						  VehicleTypeName VARCHAR(50));
@@ -115,7 +116,7 @@ INSERT INTO Vehicle (VehicleTypeID, VehicleImage, VehicleName, Price) VALUES (1,
 					  
 -- For the Flower Arrangement
 CREATE TABLE FlowerArrangementsType (ArrangementTypeID INT IDENTITY(1,1) PRIMARY KEY,
-									 ArrangementTypeName VARCHAR(50));
+									 ArrangementTypeName VARCHAR(100));
 									 
 INSERT INTO FlowerArrangementsType (ArrangementTypeName)VALUES ('Bouquet'),
 															   ('Wreath');
@@ -123,7 +124,7 @@ INSERT INTO FlowerArrangementsType (ArrangementTypeName)VALUES ('Bouquet'),
 CREATE TABLE FlowerArrangements (ArrangementID INT IDENTITY(1,1) PRIMARY KEY,
 							 	 ArrangementTypeID INT FOREIGN KEY REFERENCES FlowerArrangementsType(ArrangementTypeID),
 								 ArrangementImage IMAGE,
-							 	 ArrangementName VARCHAR(50),
+							 	 ArrangementName VARCHAR(200),
 								 Price DECIMAL(10, 2));
 								 
 INSERT INTO FlowerArrangements (ArrangementTypeID, ArrangementImage, ArrangementName, Price) VALUES (1, NULL, 'White Sympathy Floor', 45.00),
@@ -166,6 +167,7 @@ CREATE TABLE ServiceLights (LightID INT IDENTITY(1,1) PRIMARY KEY,
                             CreatedBy VARCHAR(100));
                             
 INSERT INTO ServiceLights (LightDescription, CreatedBy)VALUES ('Colored party lights', 'John Doe');
+SELECT * FROM ServiceLights
 
 --FOr PAckages
 CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
@@ -179,41 +181,72 @@ CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
 					  ChapelName VARCHAR(100),
 					  CasketName VARCHAR(100),
 					  VehicleName VARCHAR(100),
-					  FlowerArrangementName VARCHAR(50),
+					  FlowerArrangementName VARCHAR(200),
 					  EmbalmingDays INT,
-					  TotalPrice DECIMAL(10, 2));
+					  TotalPrice DECIMAL(10, 2),
+					  CreatedDate DATETIME DEFAULT GETDATE());
+
 					  
 INSERT INTO Package (PackageName, CasketID, LightID, SongID, VehicleID, ArrangementID, ReservationID, ChapelName, CasketName, VehicleName, FlowerArrangementName, EmbalmingDays, TotalPrice) VALUES 
-					('Premium Package', 1, 1, 1, 1, 3, 1, 'Chapel 1', 'Classic Oak Casket', 'Luxury Hearse', 'White Sympathy Floor', Null, 5000.00);
+					('Premium Package', 1, 1, 1, 1, 1, 1, 'Chapel 1', 'Classic Oak Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 5000.00);
 
 SELECT * FROM Package
 
-CREATE TABLE ServiceRequests (ServiceRequestsID INT IDENTITY(1,1) PRIMARY KEY,    
+CREATE TABLE CustomizePackage (CustomizePackageID INT IDENTITY(1,1) PRIMARY KEY,
+							   PackageID INT  FOREIGN KEY REFERENCES Package(PackageID),
+							   CasketID INT  FOREIGN KEY REFERENCES Casket(CasketID),
+							   VehicleID INT  FOREIGN KEY REFERENCES Vehicle(VehicleID),
+							   ArrangementID INT  FOREIGN KEY REFERENCES FlowerArrangements(ArrangementID),
+							   SongID INT FOREIGN KEY REFERENCES Song(SongID),
+							   LightID INT FOREIGN KEY REFERENCES ServiceLights(LightID),
+							   ReservationID INT  FOREIGN KEY REFERENCES ChapelReservation(ReservationID),
+							   ChapelName VARCHAR(100),
+							   CasketName VARCHAR(100),
+							   VehicleName VARCHAR(100),
+							   FlowerArrangementName VARCHAR(200),
+							   EmbalmingDays INT,
+							   TotalPrice DECIMAL(10, 2),
+							   CreatedDate DATETIME DEFAULT GETDATE());
+					  
+SELECT * FROM CustomizePackage
+
+CREATE TABLE DocumentType (DocumentTypeID INT IDENTITY(1,1) PRIMARY KEY,
+						   DocumentTypeName VARCHAR(100) NOT NULL);
+
+INSERT INTO DocumentType (DocumentTypeName)VALUES ('Death Certificate'),
+												  ('Medical Certificate');
+SELECT * FROM DocumentType
+
+CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,    
 							  UserID INT FOREIGN KEY REFERENCES Users(UserID),
 							  ClientID INT FOREIGN KEY REFERENCES Clients(ClientID),
-							  CasketID INT FOREIGN KEY REFERENCES Casket(CasketID), 
-							  VehicleID INT FOREIGN KEY REFERENCES Vehicle(VehicleID), 
-							  FlowerID INT FOREIGN KEY REFERENCES FlowerArrangements(ArrangementID),
-							  SongID INT FOREIGN KEY REFERENCES Song(SongID),
-							  ReservationID INT FOREIGN KEY REFERENCES ChapelReservation(ReservationID),
-							  LightID INT FOREIGN KEY REFERENCES ServiceLights(LightID),
 							  PackageID INT FOREIGN KEY REFERENCES Package(PackageID),
+						    
+							  -- Client and deceased information
 							  ClientName VARCHAR(250),
-							  DeseasedFName VARCHAR(100) NOT NULL, 
-							  DeseasedLName VARCHAR(100) NOT NULL, 
-							  DeseasedMInitial VARCHAR(50),
+							  DeceasedFName VARCHAR(100) NOT NULL, 
+							  DeceasedLName VARCHAR(100) NOT NULL, 
+							  DeceasedMInitial VARCHAR(50),
+
+							  -- Package information
+							  CasketName VARCHAR(100), 
+							  VehicleName VARCHAR(100), 
+							  FlowerArrangementName VARCHAR(200),
+							  SongName VARCHAR(100), 
+							  ChapelName VARCHAR(100), 
+							  ServiceLightsName VARCHAR(100),
+							  PackageName VARCHAR(100), 
+						    
+							  -- Burial and service details
 							  Cemetery VARCHAR(200),
 							  DateBurial DATE, 
 							  TimeBurial TIME,  
 							  Address VARCHAR(200),
-							  Package VARCHAR(100),
-							  Casket VARCHAR(100),
-							  Vehicle VARCHAR(100),
-							  Flower VARCHAR(100),
+						    
+							  -- Service specifics
 							  EmbalmingDays INT,
-							  Song VARCHAR(100),
-							  ServiceLights VARCHAR(100),
-							  Chapel VARCHAR(100),
 							  Status VARCHAR(50),
+						    
+							  -- Auditing details
 							  CreationDate DATETIME DEFAULT GETDATE(), 
-							  CreatedBy VARCHAR(250));   -- User who created the service request
+							  CreatedBy VARCHAR(250));
