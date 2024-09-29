@@ -189,6 +189,8 @@ CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
 					  
 INSERT INTO Package (PackageName, CasketID, LightID, SongID, VehicleID, ArrangementID, ReservationID, ChapelName, CasketName, VehicleName, FlowerArrangementName, EmbalmingDays, TotalPrice) VALUES 
 					('Premium Package', 1, 1, 1, 1, 1, 1, 'Chapel 1', 'Classic Oak Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 5000.00);
+INSERT INTO Package (PackageName, CasketID, LightID, SongID, VehicleID, ArrangementID, ReservationID, ChapelName, CasketName, VehicleName, FlowerArrangementName, EmbalmingDays, TotalPrice) VALUES 
+					('Ordinary', 2, 1, 1, 1, 1, 1, 'Chapel 1', 'Stainless Steel Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 5195.00);
 
 SELECT * FROM Package
 
@@ -217,10 +219,27 @@ INSERT INTO DocumentType (DocumentTypeName)VALUES ('Death Certificate'),
 												  ('Medical Certificate');
 SELECT * FROM DocumentType
 
+CREATE TABLE ServiceStatus (ServiceStatusID INT IDENTITY(1,1) PRIMARY KEY,
+							StatusName VARCHAR(50) NOT NULL);
+INSERT INTO ServiceStatus (StatusName) VALUES ('Pending'), 
+											  ('In Progress'), 
+											  ('Completed'), 
+											  ('Cancelled');
+											  
 CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,    
 							  UserID INT FOREIGN KEY REFERENCES Users(UserID),
 							  ClientID INT FOREIGN KEY REFERENCES Clients(ClientID),
-							  PackageID INT FOREIGN KEY REFERENCES Package(PackageID),
+							  ServiceStatusID INT FOREIGN KEY REFERENCES ServiceStatus(ServiceStatusID),
+							  DocumentTypeID INT FOREIGN KEY REFERENCES DocumentType(DocumentTypeID),
+
+							  
+							  --package 
+							  CopPackageID INT  FOREIGN KEY REFERENCES Package(PackageID),
+							  CopCasketID INT FOREIGN KEY REFERENCES Casket(CasketID),
+							  CopVehicleID INT FOREIGN KEY REFERENCES Vehicle(VehicleID),
+							  CopArrangementID INT FOREIGN KEY REFERENCES FlowerArrangements(ArrangementID),
+							  CopSongID INT FOREIGN KEY REFERENCES Song(SongID),
+							  CopLightID INT FOREIGN KEY REFERENCES ServiceLights(LightID),
 						    
 							  -- Client and deceased information
 							  ClientName VARCHAR(250),
@@ -242,11 +261,28 @@ CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
 							  DateBurial DATE, 
 							  TimeBurial TIME,  
 							  Address VARCHAR(200),
+							  
+							  DocumentType VARCHAR(100),
+							  DocumentImage IMAGE,
 						    
 							  -- Service specifics
 							  EmbalmingDays INT,
-							  Status VARCHAR(50),
+							  TotalPrice DECIMAL(10, 2),
 						    
 							  -- Auditing details
 							  CreationDate DATETIME DEFAULT GETDATE(), 
 							  CreatedBy VARCHAR(250));
+							 
+INSERT INTO ServiceRequests (UserID, ClientID, ServiceStatusID, DocumentTypeID, CopPackageID, CopCasketID, 
+							 CopVehicleID, CopArrangementID, CopSongID, CopLightID,
+							 ClientName, DeceasedFName, DeceasedLName, DeceasedMInitial, 
+							 CasketName, VehicleName, FlowerArrangementName, SongName, 
+							 ChapelName, ServiceLightsName, PackageName, Cemetery, 
+							 DateBurial, TimeBurial, Address, DocumentType, 
+							 DocumentImage, EmbalmingDays, TotalPrice, CreatedBy) 
+VALUES (1, 1, 2, 1, 1, 1, 1, 1, 1, 1,
+		'asd', 'asd', 'asd', 'a', 
+		'Wooden Casket', 'Luxury Hearse', 'Rose Arrangement', 'Amazing Grace', 
+		'Chapel of Peace', 'Bright Lights', 'Gold Package', 'Greenwood Cemetery', 
+		'2024-10-10', '15:00:00', 'asd', 'Death Certificate', 
+		NULL, 3, 1200.00, 'Admin');
