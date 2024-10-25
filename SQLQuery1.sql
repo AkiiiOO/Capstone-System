@@ -66,9 +66,9 @@ SELECT * FROM AccessLevelPermissions
 
 CREATE TABLE Clients (ClientID INT IDENTITY(1,1) PRIMARY KEY,
 					  UserID INT,
-					  FirstName VARCHAR(100),
-					  MiddleInitial CHAR(1),
-					  LastName VARCHAR(100),
+					  FirstName VARCHAR(100)NOT NULL,
+					  MiddleInitial CHAR(1)NULL,
+					  LastName VARCHAR(100)NOT NULL,
 					  Address VARCHAR(200),
 					  Contact_No Char(11),
 					  DateCreated DATETIME DEFAULT GETDATE(),
@@ -108,9 +108,9 @@ CREATE TABLE Vehicle (VehicleID INT IDENTITY(1,1) PRIMARY KEY,
 					  VehicleName VARCHAR(100),
 					  Price DECIMAL(10, 2));
 					  
-INSERT INTO Vehicle (VehicleTypeID, VehicleImage, VehicleName, Price) VALUES (1, NULL, 'Luxury Hearse', 250.00),
-																			 (2, NULL, 'Standard Van', 150.00);
-					  
+INSERT INTO Vehicle (VehicleTypeID, VehicleImage, VehicleName, Price) VALUES (1, NULL, 'car1', 250.00),
+																			 (2, NULL, 'car2', 150.00);
+SELECT * FROM Vehicle		  
 -- For the Flower Arrangement
 CREATE TABLE FlowerArrangementsType (ArrangementTypeID INT IDENTITY(1,1) PRIMARY KEY,
 									 ArrangementTypeName VARCHAR(100));
@@ -259,11 +259,22 @@ INSERT INTO ServiceType (ServiceTypeName) VALUES ('Home Service'),
 												 ('Chapel Service');
 SELECT * FROM ServiceType
 
+CREATE TABLE ReservationStatus (ReservationStatusID INT IDENTITY(1,1) PRIMARY KEY,
+								StatusName VARCHAR(50) NOT NULL);
+								
+INSERT INTO ReservationStatus (StatusName) VALUES ('Pending');
+INSERT INTO ReservationStatus (StatusName) VALUES ('Confirmed');
+INSERT INTO ReservationStatus (StatusName) VALUES ('Canceled');
+INSERT INTO ReservationStatus (StatusName) VALUES ('Completed');
+
+SELECT * FROM ReservationStatus
+
 --not yet fixed
 CREATE TABLE ChapelReservation (ReservationID INT IDENTITY(1,1) PRIMARY KEY,   
-								ChapelID INT NOT NULL FOREIGN KEY REFERENCES Chapel(ChapelID),    
+								ChapelID INT Null FOREIGN KEY REFERENCES Chapel(ChapelID),    
 								ClientID INT NOT NULL FOREIGN KEY REFERENCES Clients(ClientID),
 								ServiceTypeID INT NULL FOREIGN KEY REFERENCES ServiceType(ServiceTypeID),
+								ReservationStatusID INT NULL FOREIGN KEY REFERENCES ReservationStatus(ReservationStatusID),
 								ServiceTypeName VARCHAR(100) NULL,
 								StartDate DATE NOT NULL,
 								EndDate DATE NOT NULL,
@@ -272,13 +283,15 @@ CREATE TABLE ChapelReservation (ReservationID INT IDENTITY(1,1) PRIMARY KEY,
 								DateCreated DATETIME DEFAULT GETDATE());
 SELECT * FROM ChapelReservation
 
+
+
 CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,    
 							  UserID INT FOREIGN KEY REFERENCES Users(UserID),
 							  ClientID INT FOREIGN KEY REFERENCES Clients(ClientID),
 							  ServiceStatusID INT FOREIGN KEY REFERENCES ServiceStatus(ServiceStatusID),
-							  DocumentTypeID INT FOREIGN KEY REFERENCES DocumentType(DocumentTypeID),
-							  CemeteryID INT FOREIGN KEY REFERENCES Cemeteries(CemeteryID),
 							  ServiceTypeID INT FOREIGN KEY REFERENCES ServiceType(ServiceTypeID),
+							  CemeteryID INT FOREIGN KEY REFERENCES Cemeteries(CemeteryID),
+							  DocumentTypeID INT FOREIGN KEY REFERENCES DocumentType(DocumentTypeID),
 							  ReservationID INT NULL FOREIGN KEY REFERENCES ChapelReservation(ReservationID),
 							  
 							  --package 
@@ -296,13 +309,13 @@ CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
 							  ClientName VARCHAR(250),
 							  DeceasedFName VARCHAR(100) NOT NULL, 
 							  DeceasedLName VARCHAR(100) NOT NULL, 
-							  DeceasedMInitial VARCHAR(50),
+							  DeceasedMInitial VARCHAR(50)NULL,
 
 							  -- Package information
 							  CasketName VARCHAR(100), 
 							  VehicleName VARCHAR(100), 
 							  FlowerArrangementName VARCHAR(200),
-							  SongName VARCHAR(100), 
+							  PlaylistName VARCHAR(100), 
 							  ChapelName VARCHAR(100), 
 							  ServiceLightsName VARCHAR(100),
 							  PackageName VARCHAR(100), 
@@ -323,17 +336,5 @@ CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
 							  -- Auditing details
 							  CreationDate DATETIME DEFAULT GETDATE(), 
 							  CreatedBy VARCHAR(250));
-							 
-INSERT INTO ServiceRequests (UserID, ClientID, ServiceStatusID, DocumentTypeID, CopPackageID, CopCasketID, 
-							 CopVehicleID, CopArrangementID, CopSongID, CopLightID,
-							 ClientName, DeceasedFName, DeceasedLName, DeceasedMInitial, 
-							 CasketName, VehicleName, FlowerArrangementName, SongName, 
-							 ChapelName, ServiceLightsName, PackageName, Cemetery, 
-							 DateBurial, TimeBurial, Address, DocumentType, 
-							 DocumentImage, EmbalmingDays, TotalPrice, CreatedBy) 
-VALUES (1, 1, 2, 1, 1, 1, 1, 1, 1, 1,
-		'asd', 'asd', 'asd', 'a', 
-		'Wooden Casket', 'Luxury Hearse', 'Rose Arrangement', 'Amazing Grace', 
-		'Chapel of Peace', 'Bright Lights', 'Gold Package', 'Greenwood Cemetery', 
-		'2024-10-10', '15:00:00', 'asd', 'Death Certificate', 
-		NULL, 3, 1200.00, 'Admin');
+
+SELECT * FROM ServiceRequests
