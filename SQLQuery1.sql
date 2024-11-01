@@ -156,14 +156,6 @@ CREATE TABLE PlaylistSongs (PlaylistSongsID INT IDENTITY(1,1) PRIMARY KEY,
 							DateCreated DATETIME DEFAULT GETDATE());
 SELECT * FROM PlaylistSongs
 
---lights
-CREATE TABLE ServiceLights (LightID INT IDENTITY(1,1) PRIMARY KEY,
-                            LightDescription VARCHAR(200),
-                            CreatedBy VARCHAR(100));
-                            
-INSERT INTO ServiceLights (LightDescription, CreatedBy)VALUES ('Colored party lights', 'John Doe');
-SELECT * FROM ServiceLights
-
 -- embalming price
 CREATE TABLE EmbalmingPrice (EmbalmingPriceId INT PRIMARY KEY IDENTITY(1,1),
 							 IncludedDays INT NOT NULL,
@@ -171,19 +163,17 @@ CREATE TABLE EmbalmingPrice (EmbalmingPriceId INT PRIMARY KEY IDENTITY(1,1),
 							 AdditionalDayCharge DECIMAL(18, 2) NOT NULL,
 							 CreatedDate DATETIME DEFAULT GETDATE());
 INSERT INTO EmbalmingPrice (IncludedDays, BasePrice, AdditionalDayCharge)VALUES 
-							(4, 5000.00, 5000.00);
+							(4, 2000.00, 4000.00);
 SELECT * FROM EmbalmingPrice
 
 
 --FOr PAckages
 CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
-					  PackageName VARCHAR(100) NOT NULL,
 					  CasketID INT  FOREIGN KEY REFERENCES Casket(CasketID),
-					  LightID INT FOREIGN KEY REFERENCES ServiceLights(LightID),
 					  PlaylistsID INT FOREIGN KEY REFERENCES Playlists(PlaylistsID),
 					  VehicleID INT  FOREIGN KEY REFERENCES Vehicle(VehicleID),
 					  ArrangementID INT  FOREIGN KEY REFERENCES FlowerArrangements(ArrangementID),
-					  EmbalmingPriceId INT  FOREIGN KEY REFERENCES EmbalmingPrice(EmbalmingPriceId),
+					  PackageName VARCHAR(100),
 					  CasketName VARCHAR(100),
 					  VehicleName VARCHAR(100),
 					  FlowerArrangementName VARCHAR(200),
@@ -193,10 +183,10 @@ CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
 					  CreatedDate DATETIME DEFAULT GETDATE());
 
 					  
-INSERT INTO Package (PackageName, CasketID, LightID, PlaylistsID, VehicleID, ArrangementID, CasketName, VehicleName, FlowerArrangementName, EmbalmingDays, TotalPrice) VALUES 
-					('Premium Package', 1, 1, 1, 1, 1, 'Classic Oak Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 5000.00);
-INSERT INTO Package (PackageName, CasketID, LightID, PlaylistsID, VehicleID, ArrangementID, CasketName, VehicleName, FlowerArrangementName, EmbalmingDays, TotalPrice) VALUES 
-					('Ordinary', 2, 1, 1, 1, 1, 'Stainless Steel Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 5195.00);
+INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, ArrangementID, CasketName, VehicleName, FlowerArrangementName,EmbalmingDays, TotalPrice) VALUES 
+					('Premium Package', 1, 1, 1, 1, 'Classic Oak Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 895.00);
+INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, ArrangementID, CasketName, VehicleName, FlowerArrangementName,EmbalmingDays, TotalPrice) VALUES 
+					('Ordinary', 2, 1, 1, 1, 'Stainless Steel Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 1195.00);
 
 SELECT * FROM Package
 
@@ -206,8 +196,7 @@ CREATE TABLE CustomizePackage (CustomizePackageID INT IDENTITY(1,1) PRIMARY KEY,
 							   VehicleID INT  FOREIGN KEY REFERENCES Vehicle(VehicleID),
 							   ArrangementID INT  FOREIGN KEY REFERENCES FlowerArrangements(ArrangementID),
 							   PlaylistSongsID INT FOREIGN KEY REFERENCES PlaylistSongs(PlaylistSongsID),
-							   LightID INT FOREIGN KEY REFERENCES ServiceLights(LightID),
-							   EmbalmingPriceId INT  FOREIGN KEY REFERENCES EmbalmingPrice(EmbalmingPriceId),
+							   PackageName VARCHAR(100),
 							   CasketName VARCHAR(100),
 							   VehicleName VARCHAR(100),
 							   FlowerArrangementName VARCHAR(200),
@@ -215,7 +204,6 @@ CREATE TABLE CustomizePackage (CustomizePackageID INT IDENTITY(1,1) PRIMARY KEY,
 							   EmbalmingDays INT,
 							   TotalPrice DECIMAL(10, 2),
 							   CreatedDate DATETIME DEFAULT GETDATE());
-					  
 SELECT * FROM CustomizePackage
 
 CREATE TABLE DocumentType (DocumentTypeID INT IDENTITY(1,1) PRIMARY KEY,
@@ -228,7 +216,7 @@ SELECT * FROM DocumentType
 CREATE TABLE ServiceStatus (ServiceStatusID INT IDENTITY(1,1) PRIMARY KEY,
 							StatusName VARCHAR(50) NOT NULL);
 INSERT INTO ServiceStatus (StatusName) VALUES ('Pending'), 
-											  ('In Progress'), 
+											  ('Ongoing'),
 											  ('Completed'), 
 											  ('Cancelled');
 CREATE TABLE Cemeteries (CemeteryID INT IDENTITY(1,1) PRIMARY KEY,
@@ -269,7 +257,7 @@ INSERT INTO ReservationStatus (StatusName) VALUES ('Completed');
 
 SELECT * FROM ReservationStatus
 
---not yet fixed
+--okay na
 CREATE TABLE ChapelReservation (ReservationID INT IDENTITY(1,1) PRIMARY KEY,   
 								ChapelID INT Null FOREIGN KEY REFERENCES Chapel(ChapelID),    
 								ClientID INT NOT NULL FOREIGN KEY REFERENCES Clients(ClientID),
@@ -284,7 +272,7 @@ CREATE TABLE ChapelReservation (ReservationID INT IDENTITY(1,1) PRIMARY KEY,
 SELECT * FROM ChapelReservation
 
 
-
+-- done
 CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,    
 							  UserID INT FOREIGN KEY REFERENCES Users(UserID),
 							  ClientID INT FOREIGN KEY REFERENCES Clients(ClientID),
@@ -292,15 +280,15 @@ CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
 							  ServiceTypeID INT FOREIGN KEY REFERENCES ServiceType(ServiceTypeID),
 							  CemeteryID INT FOREIGN KEY REFERENCES Cemeteries(CemeteryID),
 							  DocumentTypeID INT FOREIGN KEY REFERENCES DocumentType(DocumentTypeID),
-							  ReservationID INT NULL FOREIGN KEY REFERENCES ChapelReservation(ReservationID),
+							  ReservationID INT FOREIGN KEY REFERENCES ChapelReservation(ReservationID),
+							  DiscountID INT FOREIGN KEY REFERENCES Discounts(DiscountID),
 							  
 							  --package 
 							  CopPackageID INT  FOREIGN KEY REFERENCES Package(PackageID),
 							  CopCasketID INT FOREIGN KEY REFERENCES Casket(CasketID),
 							  CopVehicleID INT FOREIGN KEY REFERENCES Vehicle(VehicleID),
 							  CopArrangementID INT FOREIGN KEY REFERENCES FlowerArrangements(ArrangementID),
-							  CopSongID INT FOREIGN KEY REFERENCES Song(SongID),
-							  CopLightID INT FOREIGN KEY REFERENCES ServiceLights(LightID),
+							  CopPlaylistID INT FOREIGN KEY REFERENCES PlaylistSongs(PlaylistSongsID),
 						    
 						      -- Service type 
 						      ServiceType VARCHAR(100),
@@ -312,13 +300,13 @@ CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
 							  DeceasedMInitial VARCHAR(50)NULL,
 
 							  -- Package information
+							  PackageName VARCHAR(100),
 							  CasketName VARCHAR(100), 
 							  VehicleName VARCHAR(100), 
 							  FlowerArrangementName VARCHAR(200),
 							  PlaylistName VARCHAR(100), 
 							  ChapelName VARCHAR(100), 
-							  ServiceLightsName VARCHAR(100),
-							  PackageName VARCHAR(100), 
+							  Location VARCHAR(200),
 						    
 							  -- Burial and service details
 							  CemeteryLocation VARCHAR(200),
@@ -332,9 +320,65 @@ CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
 							  -- Service specifics
 							  EmbalmingDays INT,
 							  TotalPrice DECIMAL(10, 2),
+							  --Discount
+							  Discount VARCHAR(100),
+							  DiscountRate DECIMAL(10, 2),
 						    
 							  -- Auditing details
 							  CreationDate DATETIME DEFAULT GETDATE(), 
 							  CreatedBy VARCHAR(250));
-
 SELECT * FROM ServiceRequests
+
+CREATE TABLE Discounts (DiscountID INT IDENTITY(1,1) PRIMARY KEY,
+						DiscountName VARCHAR(100) NOT NULL,       
+						DiscountRate DECIMAL(5, 2) NOT NULL,      
+						CreatedAt DATETIME DEFAULT GETDATE());
+
+INSERT INTO Discounts (DiscountName, DiscountRate) VALUES ('Senior Citizen Discount', 10.00);
+
+SELECT * FROM Discounts
+
+CREATE TABLE PaymentOptions (PaymentOptionID INT IDENTITY(1,1) PRIMARY KEY,
+							 PaymenOptionName VARCHAR(100) NOT NULL UNIQUE);
+
+INSERT INTO PaymentOptions (PaymenOptionName) VALUES ('Full Payment');
+INSERT INTO PaymentOptions (PaymenOptionName) VALUES ('Installment');
+
+SELECT * FROM PaymentOptions
+							 
+CREATE TABLE PaymentStatus (PaymentStatusID INT IDENTITY(1,1) PRIMARY KEY,
+							PaymentStatusName VARCHAR(100) NOT NULL UNIQUE);
+							
+INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Pending');
+INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Partially Paid');
+INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Completed');
+
+-- payment 
+CREATE TABLE Payments (PaymentID INT IDENTITY(1,1) PRIMARY KEY,
+					   ServiceRequestID INT NOT NULL FOREIGN KEY REFERENCES ServiceRequests(ServiceRequestID),
+					   PaymentOptionID INT NOT NULL FOREIGN KEY REFERENCES PaymentOptions(PaymentOptionID),
+					   PaymentStatusID INT NOT NULL FOREIGN KEY REFERENCES PaymentStatus(PaymentStatusID),
+					   
+					   --charge to
+					   ClientName VARCHAR(250) NOT NULL,
+					   TotalPrice DECIMAL(10, 2) NOT NULL,
+					   
+					   --discount information
+					   DiscountApplied VARCHAR(100) NULL, 
+					   DiscountAmount DECIMAL(10, 2) NULL,
+					   FinalPrice DECIMAL(10, 2) NOT NULL,
+					   
+					   --payment option
+					   PaymentOption VARCHAR(100) NOT NULL,
+					   
+					   --Installment Payment Details
+					   InstallmentPlan INT NULL, 
+					   InstallmentNumber INT NULL,
+					   
+					   --Payment Information
+					   AmountPaid DECIMAL(10, 2)NOT NULL,
+					   RemainingBalance DECIMAL(10, 2)NOT NULL,
+					   
+					    -- Audit information
+					   CreatedBy VARCHAR(250) NOT NULL,
+					   PaymentDate DATETIME DEFAULT GETDATE());
