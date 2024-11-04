@@ -323,6 +323,7 @@ CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
 							  --Discount
 							  Discount VARCHAR(100),
 							  DiscountRate DECIMAL(10, 2),
+							  DiscountTotal DECIMAL(10, 2),
 						    
 							  -- Auditing details
 							  CreationDate DATETIME DEFAULT GETDATE(), 
@@ -335,6 +336,7 @@ CREATE TABLE Discounts (DiscountID INT IDENTITY(1,1) PRIMARY KEY,
 						CreatedAt DATETIME DEFAULT GETDATE());
 
 INSERT INTO Discounts (DiscountName, DiscountRate) VALUES ('Senior Citizen Discount', 10.00);
+INSERT INTO Discounts (DiscountName, DiscountRate) VALUES ('Tambay', 20.00);
 
 SELECT * FROM Discounts
 
@@ -353,32 +355,67 @@ INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Pending');
 INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Partially Paid');
 INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Completed');
 
+CREATE TABLE InstallmentPlans (InstallmentPlanID INT IDENTITY(1,1) PRIMARY KEY,
+							   PlanName VARCHAR(50) NOT NULL,         
+							   NumberOfPayments INT NOT NULL,        
+							   PaymentInterval VARCHAR(50) NOT NULL);
+							   
+INSERT INTO InstallmentPlans (PlanName, NumberOfPayments, PaymentInterval)VALUES
+							 ('2 Payments (Monthly)', 2, 'Monthly'),
+							 ('4 Payments (Monthly)', 4, 'Monthly'),
+							 ('6 Payments (Monthly)', 6, 'Monthly');
+
+SELECT * FROM InstallmentPlans
+
+
 -- payment 
 CREATE TABLE Payments (PaymentID INT IDENTITY(1,1) PRIMARY KEY,
-					   ServiceRequestID INT NOT NULL FOREIGN KEY REFERENCES ServiceRequests(ServiceRequestID),
 					   PaymentOptionID INT NOT NULL FOREIGN KEY REFERENCES PaymentOptions(PaymentOptionID),
 					   PaymentStatusID INT NOT NULL FOREIGN KEY REFERENCES PaymentStatus(PaymentStatusID),
-					   
-					   --charge to
+					   DiscountID INT NULL FOREIGN KEY REFERENCES Discounts(DiscountID),
+					   InstallmentPlanID INT NULL FOREIGN KEY REFERENCES InstallmentPlans(InstallmentPlanID),
+						   
+						--charge to
 					   ClientName VARCHAR(250) NOT NULL,
 					   TotalPrice DECIMAL(10, 2) NOT NULL,
-					   
+				   
 					   --discount information
 					   DiscountApplied VARCHAR(100) NULL, 
 					   DiscountAmount DECIMAL(10, 2) NULL,
 					   FinalPrice DECIMAL(10, 2) NOT NULL,
-					   
+						   
 					   --payment option
 					   PaymentOption VARCHAR(100) NOT NULL,
-					   
+						   
 					   --Installment Payment Details
-					   InstallmentPlan INT NULL, 
-					   InstallmentNumber INT NULL,
-					   
+					   InstallmentPlan VARCHAR(100) NULL, 
+						   
 					   --Payment Information
 					   AmountPaid DECIMAL(10, 2)NOT NULL,
 					   RemainingBalance DECIMAL(10, 2)NOT NULL,
-					   
-					    -- Audit information
+						   
+					   -- Audit information
 					   CreatedBy VARCHAR(250) NOT NULL,
 					   PaymentDate DATETIME DEFAULT GETDATE());
+						   
+SELECT * FROM Payments   
+					   
+CREATE TABLE Installments (InstallmentID INT IDENTITY(1,1) PRIMARY KEY,
+						   PaymentID INT NOT NULL FOREIGN KEY REFERENCES Payments(PaymentID),
+						   PaymentStatusID INT NOT NULL FOREIGN KEY REFERENCES PaymentStatus(PaymentStatusID),
+						   InstallmentNumber INT NOT NULL,
+						   DueDate DATE NOT NULL,
+						   Amount DECIMAL(10, 2) NOT NULL,
+						   AmountPaid DECIMAL(10, 2) NOT NULL,
+						   CreatedBy VARCHAR(250) NOT NULL,
+						   PaymentDate DATETIME DEFAULT GETDATE());
+						   
+SELECT * FROM Installments 
+
+CREATE TABLE PaymentServiceRequests (PaymentServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
+									 PaymentID INT NOT NULL FOREIGN KEY REFERENCES Payments(PaymentID),
+									 ServiceRequestID INT NOT NULL FOREIGN KEY REFERENCES ServiceRequests(ServiceRequestID));
+SELECT * FROM PaymentServiceRequests
+
+
+
