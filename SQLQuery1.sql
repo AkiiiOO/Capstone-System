@@ -353,7 +353,8 @@ CREATE TABLE PaymentStatus (PaymentStatusID INT IDENTITY(1,1) PRIMARY KEY,
 							
 INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Pending');
 INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Partially Paid');
-INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Completed');
+INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Paid');
+SELECT * FROM PaymentStatus
 
 CREATE TABLE InstallmentPlans (InstallmentPlanID INT IDENTITY(1,1) PRIMARY KEY,
 							   PlanName VARCHAR(50) NOT NULL,         
