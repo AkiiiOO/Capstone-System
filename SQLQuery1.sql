@@ -219,6 +219,8 @@ INSERT INTO ServiceStatus (StatusName) VALUES ('Pending'),
 											  ('Ongoing'),
 											  ('Completed'), 
 											  ('Cancelled');
+SELECT * FROM ServiceStatus
+
 CREATE TABLE Cemeteries (CemeteryID INT IDENTITY(1,1) PRIMARY KEY,
 						 CemeteryName VARCHAR(200) NOT NULL,
 						 Location VARCHAR(250),
@@ -354,6 +356,7 @@ CREATE TABLE PaymentStatus (PaymentStatusID INT IDENTITY(1,1) PRIMARY KEY,
 INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Pending');
 INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Partially Paid');
 INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Paid');
+INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('OverDue');
 SELECT * FROM PaymentStatus
 
 CREATE TABLE InstallmentPlans (InstallmentPlanID INT IDENTITY(1,1) PRIMARY KEY,
@@ -398,7 +401,6 @@ CREATE TABLE Payments (PaymentID INT IDENTITY(1,1) PRIMARY KEY,
 					   -- Audit information
 					   CreatedBy VARCHAR(250) NOT NULL,
 					   PaymentDate DATETIME DEFAULT GETDATE());
-						   
 SELECT * FROM Payments   
 					   
 CREATE TABLE Installments (InstallmentID INT IDENTITY(1,1) PRIMARY KEY,
