@@ -184,9 +184,9 @@ CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
 
 					  
 INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, ArrangementID, CasketName, VehicleName, FlowerArrangementName,EmbalmingDays, TotalPrice) VALUES 
-					('Premium Package', 1, 1, 1, 1, 'Classic Oak Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 895.00);
+					('Premium Package', 1, 2, 1, 1, 'Classic Oak Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 895.00);
 INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, ArrangementID, CasketName, VehicleName, FlowerArrangementName,EmbalmingDays, TotalPrice) VALUES 
-					('Ordinary', 2, 1, 1, 1, 'Stainless Steel Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 1195.00);
+					('Ordinary', 2, 2, 1, 1, 'Stainless Steel Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 1195.00);
 
 SELECT * FROM Package
 
@@ -338,7 +338,6 @@ CREATE TABLE Discounts (DiscountID INT IDENTITY(1,1) PRIMARY KEY,
 						CreatedAt DATETIME DEFAULT GETDATE());
 
 INSERT INTO Discounts (DiscountName, DiscountRate) VALUES ('Senior Citizen Discount', 10.00);
-INSERT INTO Discounts (DiscountName, DiscountRate) VALUES ('Tambay', 20.00);
 
 SELECT * FROM Discounts
 
