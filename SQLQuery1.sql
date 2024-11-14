@@ -31,12 +31,19 @@ CREATE TABLE Users (UserID INT PRIMARY KEY IDENTITY(1,1),
 					FirstName VARCHAR(100),
 					LastName VARCHAR(100),
 					Contact_No Char(11), 
+					SecurityAnswer VARCHAR(255),
 					StatusID INT, 
 					CreatedDate DATETIME DEFAULT GETDATE(),
-					UpdatedDate DATETIME DEFAULT GETDATE(),
 					FOREIGN KEY (StatusID) REFERENCES UserStatus(StatusID));
 SELECT * FROM Users
-							   
+
+CREATE TABLE UserLog (LogID INT PRIMARY KEY IDENTITY(1,1),
+					  UserID INT FOREIGN KEY REFERENCES Users(UserID),
+					  LoginDateTime DATETIME DEFAULT GETDATE(),
+					  LogoutDateTime DATETIME NULL);
+
+SELECT * FROM UserLog
+
 CREATE TABLE UserAccessLevels (UserAccessLevelID INT PRIMARY KEY IDENTITY(1,1),
 							   UserID INT FOREIGN KEY REFERENCES Users(UserID),
 							   AccessLevelID INT FOREIGN KEY REFERENCES AccessLevels(AccessLevelID),
@@ -52,8 +59,9 @@ CREATE TABLE AccessLevelPermissions (AccessLevelPermissionID INT PRIMARY KEY IDE
 									 
 
 --Users
-INSERT INTO Users (Username, Password, FirstName, LastName, Contact_No, StatusID)
-VALUES ('admin', 'admin', 'John', 'A', '09345678911', 1);
+INSERT INTO Users (Username, Password, FirstName, LastName, Contact_No, SecurityAnswer, StatusID, CreatedDate)
+VALUES ('admin', 'admin', 
+        'John', 'A', '09345678911', 'buggles', 1, GETDATE());
 
 --UserAccessLevels
 INSERT INTO UserAccessLevels (UserID, AccessLevelID) VALUES (1, 1);
@@ -67,7 +75,7 @@ SELECT * FROM AccessLevelPermissions
 CREATE TABLE Clients (ClientID INT IDENTITY(1,1) PRIMARY KEY,
 					  UserID INT,
 					  FirstName VARCHAR(100)NOT NULL,
-					  MiddleInitial CHAR(1)NULL,
+					  MiddleName VARCHAR(100)NULL,
 					  LastName VARCHAR(100)NOT NULL,
 					  Address VARCHAR(200),
 					  Contact_No Char(11),
@@ -184,7 +192,7 @@ CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
 
 					  
 INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, ArrangementID, CasketName, VehicleName, FlowerArrangementName,EmbalmingDays, TotalPrice) VALUES 
-					('Premium Package', 1, 2, 1, 1, 'Classic Oak Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 895.00);
+					('Premium Package', 1, 2, 1, 1, 'Classic Oak Casket', 'Luxury Hearse', 'White Sympathy Floor', 9, 895.00);
 INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, ArrangementID, CasketName, VehicleName, FlowerArrangementName,EmbalmingDays, TotalPrice) VALUES 
 					('Ordinary', 2, 2, 1, 1, 'Stainless Steel Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 1195.00);
 
@@ -273,6 +281,14 @@ CREATE TABLE ChapelReservation (ReservationID INT IDENTITY(1,1) PRIMARY KEY,
 								DateCreated DATETIME DEFAULT GETDATE());
 SELECT * FROM ChapelReservation
 
+CREATE TABLE Discounts (DiscountID INT IDENTITY(1,1) PRIMARY KEY,
+						DiscountName VARCHAR(100) NOT NULL,       
+						DiscountRate DECIMAL(5, 2) NOT NULL,      
+						CreatedAt DATETIME DEFAULT GETDATE());
+
+INSERT INTO Discounts (DiscountName, DiscountRate) VALUES ('Senior Citizen Discount', 10.00);
+
+SELECT * FROM Discounts
 
 -- done
 CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,    
@@ -299,7 +315,7 @@ CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
 							  ClientName VARCHAR(250),
 							  DeceasedFName VARCHAR(100) NOT NULL, 
 							  DeceasedLName VARCHAR(100) NOT NULL, 
-							  DeceasedMInitial VARCHAR(50)NULL,
+							  DeceasedMName VARCHAR(100)NULL,
 
 							  -- Package information
 							  PackageName VARCHAR(100),
@@ -331,15 +347,6 @@ CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
 							  CreationDate DATETIME DEFAULT GETDATE(), 
 							  CreatedBy VARCHAR(250));
 SELECT * FROM ServiceRequests
-
-CREATE TABLE Discounts (DiscountID INT IDENTITY(1,1) PRIMARY KEY,
-						DiscountName VARCHAR(100) NOT NULL,       
-						DiscountRate DECIMAL(5, 2) NOT NULL,      
-						CreatedAt DATETIME DEFAULT GETDATE());
-
-INSERT INTO Discounts (DiscountName, DiscountRate) VALUES ('Senior Citizen Discount', 10.00);
-
-SELECT * FROM Discounts
 
 CREATE TABLE PaymentOptions (PaymentOptionID INT IDENTITY(1,1) PRIMARY KEY,
 							 PaymenOptionName VARCHAR(100) NOT NULL UNIQUE);
@@ -411,7 +418,6 @@ CREATE TABLE Installments (InstallmentID INT IDENTITY(1,1) PRIMARY KEY,
 						   AmountPaid DECIMAL(10, 2) NOT NULL,
 						   CreatedBy VARCHAR(250) NOT NULL,
 						   PaymentDate DATETIME DEFAULT GETDATE());
-						   
 SELECT * FROM Installments 
 
 CREATE TABLE PaymentServiceRequests (PaymentServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,
