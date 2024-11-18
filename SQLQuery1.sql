@@ -188,17 +188,17 @@ CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
 					  CreatedDate DATETIME DEFAULT GETDATE());
 
 CREATE TABLE PackageFlowerArrangements (PackageFlowerArrangementID INT IDENTITY(1,1) PRIMARY KEY,
-											   PackageID INT FOREIGN KEY REFERENCES Package(PackageID),
-											   ArrangementID INT FOREIGN KEY REFERENCES FlowerArrangements(ArrangementID),
-											   FlowerArrangementName VARCHAR(200),
-											   Quantity INT, 
-											   Additional Text, 
-											   PricePerUnit DECIMAL(10, 2));
+										PackageID INT FOREIGN KEY REFERENCES Package(PackageID),
+										ArrangementID INT FOREIGN KEY REFERENCES FlowerArrangements(ArrangementID),
+										FlowerArrangementName VARCHAR(200),
+										Quantity INT, 
+										Additional Text, 
+										PricePerUnit DECIMAL(10, 2));
 
-INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, ArrangementID, CasketName, VehicleName, FlowerArrangementName,EmbalmingDays, TotalPrice) VALUES 
-					('Premium Package', 1, 2, 1, 1, 'Classic Oak Casket', 'Luxury Hearse', 'White Sympathy Floor', 9, 895.00);
-INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, ArrangementID, CasketName, VehicleName, FlowerArrangementName,EmbalmingDays, TotalPrice) VALUES 
-					('Ordinary', 2, 2, 1, 1, 'Stainless Steel Casket', 'Luxury Hearse', 'White Sympathy Floor', 0, 1195.00);
+INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, CasketName, VehicleName,EmbalmingDays, TotalPrice) VALUES 
+					('Premium Package', 1, 2, 1, 'Classic Oak Casket', 'Luxury Hearse', 9, 895.00);
+INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, CasketName, VehicleName,EmbalmingDays, TotalPrice) VALUES 
+					('Ordinary', 2, 2, 1,  'Stainless Steel Casket', 'Luxury Hearse', 0, 1195.00);
 
 SELECT * FROM Package
 
@@ -430,12 +430,13 @@ CREATE TABLE PaymentServiceRequests (PaymentServiceRequestID INT IDENTITY(1,1) P
 SELECT * FROM PaymentServiceRequests
 
 
---wag isama hindi pa tapos
+
 CREATE TABLE InterestRate (InterestRateID INT IDENTITY(1,1) PRIMARY KEY,
 						   InterestRate DECIMAL(5, 2) NOT NULL ,
 							LastUpdated DATETIME DEFAULT GETDATE());
--- Insert initial rate
+
 INSERT INTO InterestRate (InterestRate) VALUES (5.00);
 
+SELECT * FROM InterestRate
 
 
