@@ -173,6 +173,17 @@ INSERT INTO EmbalmingPrice (IncludedDays, BasePrice, AdditionalDayCharge)VALUES
 							(4, 2000.00, 4000.00);
 SELECT * FROM EmbalmingPrice
 
+CREATE TABLE Equipment (EquipmentID INT IDENTITY(1,1) PRIMARY KEY,
+						EquipmentName VARCHAR(200),
+						EquipmentType VARCHAR(100),
+						Quantity INT,
+						CreatedDate DATETIME DEFAULT GETDATE());
+INSERT INTO Equipment (EquipmentName, EquipmentType, Quantity) VALUES
+					  ('Religion Stand Board', 'Stand', 10),
+					  ('Lights Silver', 'Light', 5),
+					  ('Casket Stand', 'Casket Stand', 20);
+
+
 
 --FOr PAckages
 CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
@@ -186,6 +197,7 @@ CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
 					  EmbalmingDays INT,
 					  TotalPrice DECIMAL(10, 2),
 					  CreatedDate DATETIME DEFAULT GETDATE());
+SELECT * FROM Package
 
 CREATE TABLE PackageFlowerArrangements (PackageFlowerArrangementID INT IDENTITY(1,1) PRIMARY KEY,
 										PackageID INT FOREIGN KEY REFERENCES Package(PackageID),
@@ -194,13 +206,27 @@ CREATE TABLE PackageFlowerArrangements (PackageFlowerArrangementID INT IDENTITY(
 										Quantity INT, 
 										Additional Text, 
 										PricePerUnit DECIMAL(10, 2));
-
+SELECT * FROM PackageFlowerArrangements
 INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, CasketName, VehicleName,EmbalmingDays, TotalPrice) VALUES 
 					('Premium Package', 1, 2, 1, 'Classic Oak Casket', 'Luxury Hearse', 9, 895.00);
 INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, CasketName, VehicleName,EmbalmingDays, TotalPrice) VALUES 
 					('Ordinary', 2, 2, 1,  'Stainless Steel Casket', 'Luxury Hearse', 0, 1195.00);
 
 SELECT * FROM Package
+INSERT INTO PackageFlowerArrangements (PackageID, ArrangementID, FlowerArrangementName, Quantity, Additional, PricePerUnit)
+VALUES (1, 1, 'White Sympathy Floor', 2, null , 45.00),
+	   (1, 1, 'White Sympathy Floor', 1, null, 45.00);
+	   
+CREATE TABLE PackageEquipments (PackageEquipmentID INT IDENTITY(1,1) PRIMARY KEY,
+										 PackageID INT FOREIGN KEY REFERENCES CustomizePackage(CustomizePackageID),
+										 EquipmentID INT FOREIGN KEY REFERENCES Equipment(EquipmentID),
+										 EquipmentName VARCHAR(200),
+										 EquipmentType VARCHAR(100),
+										 Quantity INT);
+SELECT * FROM PackageEquipments
+INSERT INTO PackageEquipments (PackageID, EquipmentID, EquipmentName, EquipmentType, Quantity)
+VALUES (1, 1, 'Religion Stand Board', 'Stand', 1),
+	   (1, 1, 'Lights Silver', 'Light', 1);
 
 CREATE TABLE CustomizePackage (CustomizePackageID INT IDENTITY(1,1) PRIMARY KEY,
 							   PackageID INT  FOREIGN KEY REFERENCES Package(PackageID),
@@ -223,7 +249,17 @@ CREATE TABLE CustomizePackageFlowerArrangements (CustomizePackageFlowerArrangeme
 												 Quantity INT, 
 												 Additional Text, 
 												 PricePerUnit DECIMAL(10, 2));
-SELECT * FROM CustomizePackageFlowerArrangements				   
+SELECT * FROM CustomizePackageFlowerArrangements
+
+
+CREATE TABLE CustomizePackageEquipments (CustomizePackageEquipmentID INT IDENTITY(1,1) PRIMARY KEY,
+										 CustomizePackageID INT FOREIGN KEY REFERENCES CustomizePackage(CustomizePackageID),
+										 EquipmentID INT FOREIGN KEY REFERENCES Equipment(EquipmentID),
+										 EquipmentName VARCHAR(200),
+										 EquipmentType VARCHAR(100),
+										 Quantity INT);
+										 
+SELECT * FROM CustomizePackageEquipments
 
 CREATE TABLE DocumentType (DocumentTypeID INT IDENTITY(1,1) PRIMARY KEY,
 						   DocumentTypeName VARCHAR(100) NOT NULL);
@@ -351,6 +387,15 @@ CREATE TABLE ServiceRequestsFlowerArrangements (ServiceRequestsFlowerArrangement
 												Additional Text, 
 												PricePerUnit DECIMAL(10, 2));
 SELECT * FROM ServiceRequestsFlowerArrangements
+
+CREATE TABLE ServiceRequestsPackageEquipments (ServiceRequestsPackageEquipmentID INT IDENTITY(1,1) PRIMARY KEY,
+											   ServiceRequestID INT FOREIGN KEY REFERENCES ServiceRequests(ServiceRequestID),
+											   EquipmentID INT FOREIGN KEY REFERENCES Equipment(EquipmentID),
+											   EquipmentName VARCHAR(200),
+											   EquipmentType VARCHAR(100),
+											   Quantity INT);
+										 
+SELECT * FROM ServiceRequestsPackageEquipments
 
 CREATE TABLE PaymentOptions (PaymentOptionID INT IDENTITY(1,1) PRIMARY KEY,
 							 PaymenOptionName VARCHAR(100) NOT NULL UNIQUE);
