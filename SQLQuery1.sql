@@ -15,16 +15,6 @@ INSERT INTO AccessLevels (AccessLevelName) VALUES ('Inventory');
 
 SELECT * FROM AccessLevels
 
-CREATE TABLE Permissions (PermissionID INT PRIMARY KEY IDENTITY(1,1),
-						  PermissionName VARCHAR(50)UNIQUE NOT NULL);
-
-INSERT INTO Permissions (PermissionName) VALUES ('Full control');
-INSERT INTO Permissions (PermissionName) VALUES ('Modify');
-INSERT INTO Permissions (PermissionName) VALUES ('Read');
-INSERT INTO Permissions (PermissionName) VALUES ('Write');
-
-SELECT * FROM Permissions
-
 CREATE TABLE Users (UserID INT PRIMARY KEY IDENTITY(1,1),
 					Username VARCHAR(50) UNIQUE NOT NULL,
 					Password VARCHAR(255) NOT NULL, 
@@ -37,12 +27,9 @@ CREATE TABLE Users (UserID INT PRIMARY KEY IDENTITY(1,1),
 					FOREIGN KEY (StatusID) REFERENCES UserStatus(StatusID));
 SELECT * FROM Users
 
-CREATE TABLE UserLog (LogID INT PRIMARY KEY IDENTITY(1,1),
-					  UserID INT FOREIGN KEY REFERENCES Users(UserID),
-					  LoginDateTime DATETIME DEFAULT GETDATE(),
-					  LogoutDateTime DATETIME NULL);
-
-SELECT * FROM UserLog
+--Users
+INSERT INTO Users (Username, Password, FirstName, LastName, Contact_No, SecurityAnswer, StatusID, CreatedDate)
+VALUES ('admin', 'admin', 'John', 'A', '09999999999', 'buggles', 1, GETDATE());
 
 CREATE TABLE UserAccessLevels (UserAccessLevelID INT PRIMARY KEY IDENTITY(1,1),
 							   UserID INT FOREIGN KEY REFERENCES Users(UserID),
@@ -50,25 +37,15 @@ CREATE TABLE UserAccessLevels (UserAccessLevelID INT PRIMARY KEY IDENTITY(1,1),
 							   UNIQUE(UserID, AccessLevelID));
 SELECT * FROM UserAccessLevels
 
-
-CREATE TABLE AccessLevelPermissions (AccessLevelPermissionID INT PRIMARY KEY IDENTITY(1,1),
-									 AccessLevelID INT,
-									 PermissionID INT,
-									 FOREIGN KEY (AccessLevelID) REFERENCES AccessLevels(AccessLevelID),
-									 FOREIGN KEY (PermissionID) REFERENCES Permissions(PermissionID));
-									 
-
---Users
-INSERT INTO Users (Username, Password, FirstName, LastName, Contact_No, SecurityAnswer, StatusID, CreatedDate)
-VALUES ('admin', 'admin', 'John', 'A', '09999999999', 'buggles', 1, GETDATE());
-
---UserAccessLevels
 INSERT INTO UserAccessLevels (UserID, AccessLevelID) VALUES (1, 1);
 SELECT * FROM UserAccessLevels
 
---AccessLevelPermissions
-INSERT INTO AccessLevelPermissions (AccessLevelID, PermissionID) VALUES (1, 1);
-SELECT * FROM AccessLevelPermissions
+CREATE TABLE UserLog (LogID INT PRIMARY KEY IDENTITY(1,1),
+					  UserID INT FOREIGN KEY REFERENCES Users(UserID),
+					  LoginDateTime DATETIME DEFAULT GETDATE(),
+					  LogoutDateTime DATETIME NULL);
+
+SELECT * FROM UserLog
 
 
 CREATE TABLE Clients (ClientID INT IDENTITY(1,1) PRIMARY KEY,
@@ -183,8 +160,6 @@ INSERT INTO Equipment (EquipmentName, EquipmentType, Quantity) VALUES
 					  ('Lights Silver', 'Light', 5),
 					  ('Casket Stand', 'Casket Stand', 20);
 
-
-
 --FOr PAckages
 CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
 					  CasketID INT  FOREIGN KEY REFERENCES Casket(CasketID),
@@ -197,6 +172,12 @@ CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
 					  EmbalmingDays INT,
 					  TotalPrice DECIMAL(10, 2),
 					  CreatedDate DATETIME DEFAULT GETDATE());
+
+INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, CasketName, VehicleName,EmbalmingDays, TotalPrice) VALUES 
+					('Premium Package', 1, 2, 1, 'Classic Oak Casket', 'Luxury Hearse', 9, 895.00);
+INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, CasketName, VehicleName,EmbalmingDays, TotalPrice) VALUES 
+					('Ordinary', 2, 2, 1,  'Stainless Steel Casket', 'Luxury Hearse', 0, 1195.00);
+
 SELECT * FROM Package
 
 CREATE TABLE PackageFlowerArrangements (PackageFlowerArrangementID INT IDENTITY(1,1) PRIMARY KEY,
@@ -206,27 +187,25 @@ CREATE TABLE PackageFlowerArrangements (PackageFlowerArrangementID INT IDENTITY(
 										Quantity INT, 
 										Additional Text, 
 										PricePerUnit DECIMAL(10, 2));
-SELECT * FROM PackageFlowerArrangements
-INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, CasketName, VehicleName,EmbalmingDays, TotalPrice) VALUES 
-					('Premium Package', 1, 2, 1, 'Classic Oak Casket', 'Luxury Hearse', 9, 895.00);
-INSERT INTO Package (PackageName, CasketID, PlaylistsID, VehicleID, CasketName, VehicleName,EmbalmingDays, TotalPrice) VALUES 
-					('Ordinary', 2, 2, 1,  'Stainless Steel Casket', 'Luxury Hearse', 0, 1195.00);
 
-SELECT * FROM Package
+
 INSERT INTO PackageFlowerArrangements (PackageID, ArrangementID, FlowerArrangementName, Quantity, Additional, PricePerUnit)
-VALUES (1, 1, 'White Sympathy Floor', 2, null , 45.00),
-	   (1, 1, 'White Sympathy Floor', 1, null, 45.00);
+VALUES (1, 1, 'White Sympathy Floor', 2, null , 90.00),
+	   (2, 1, 'White Sympathy Floor', 1, null, 45.00);
+	   
+SELECT * FROM PackageFlowerArrangements
 	   
 CREATE TABLE PackageEquipments (PackageEquipmentID INT IDENTITY(1,1) PRIMARY KEY,
-										 PackageID INT FOREIGN KEY REFERENCES CustomizePackage(CustomizePackageID),
+										 PackageID INT FOREIGN KEY REFERENCES Package(PackageID),
 										 EquipmentID INT FOREIGN KEY REFERENCES Equipment(EquipmentID),
 										 EquipmentName VARCHAR(200),
 										 EquipmentType VARCHAR(100),
 										 Quantity INT);
-SELECT * FROM PackageEquipments
+
 INSERT INTO PackageEquipments (PackageID, EquipmentID, EquipmentName, EquipmentType, Quantity)
 VALUES (1, 1, 'Religion Stand Board', 'Stand', 1),
-	   (1, 1, 'Lights Silver', 'Light', 1);
+	   (2, 1, 'Lights Silver', 'Light', 1);
+SELECT * FROM PackageEquipments
 
 CREATE TABLE CustomizePackage (CustomizePackageID INT IDENTITY(1,1) PRIMARY KEY,
 							   PackageID INT  FOREIGN KEY REFERENCES Package(PackageID),
@@ -258,7 +237,6 @@ CREATE TABLE CustomizePackageEquipments (CustomizePackageEquipmentID INT IDENTIT
 										 EquipmentName VARCHAR(200),
 										 EquipmentType VARCHAR(100),
 										 Quantity INT);
-										 
 SELECT * FROM CustomizePackageEquipments
 
 CREATE TABLE DocumentType (DocumentTypeID INT IDENTITY(1,1) PRIMARY KEY,
@@ -324,6 +302,15 @@ CREATE TABLE Discounts (DiscountID INT IDENTITY(1,1) PRIMARY KEY,
 INSERT INTO Discounts (DiscountName, DiscountRate) VALUES ('Senior Citizen Discount', 10.00);
 
 SELECT * FROM Discounts
+CREATE TABLE EquipmentStatus (EquipmentStatusID INT IDENTITY(1,1) PRIMARY KEY,
+								StatusName VARCHAR(50) NOT NULL UNIQUE);
+
+INSERT INTO EquipmentStatus (StatusName) VALUES ('Pending'),
+												('Reserved'), 
+												('Released'), 
+												('Returned'), 
+												('Damaged');
+SELECT * FROM EquipmentStatus
 
 -- fixing
 CREATE TABLE ServiceRequests (ServiceRequestID INT IDENTITY(1,1) PRIMARY KEY,    
@@ -391,11 +378,13 @@ SELECT * FROM ServiceRequestsFlowerArrangements
 CREATE TABLE ServiceRequestsPackageEquipments (ServiceRequestsPackageEquipmentID INT IDENTITY(1,1) PRIMARY KEY,
 											   ServiceRequestID INT FOREIGN KEY REFERENCES ServiceRequests(ServiceRequestID),
 											   EquipmentID INT FOREIGN KEY REFERENCES Equipment(EquipmentID),
+											   EquipmentStatusID INT FOREIGN KEY REFERENCES EquipmentStatus(EquipmentStatusID),
 											   EquipmentName VARCHAR(200),
 											   EquipmentType VARCHAR(100),
 											   Quantity INT);
 										 
 SELECT * FROM ServiceRequestsPackageEquipments
+
 
 CREATE TABLE PaymentOptions (PaymentOptionID INT IDENTITY(1,1) PRIMARY KEY,
 							 PaymenOptionName VARCHAR(100) NOT NULL UNIQUE);
@@ -483,5 +472,15 @@ CREATE TABLE InterestRate (InterestRateID INT IDENTITY(1,1) PRIMARY KEY,
 INSERT INTO InterestRate (InterestRate) VALUES (5.00);
 
 SELECT * FROM InterestRate
+
+--wag muna 
+CREATE TABLE EquipmentRelease (EquipmentReleaseID INT IDENTITY(1,1) PRIMARY KEY,
+							   ServiceRequestID INT FOREIGN KEY REFERENCES ServiceRequests(ServiceRequestID),
+							   EquipmentID INT FOREIGN KEY REFERENCES Equipment(EquipmentID),
+							   Quantity INT NOT NULL,
+							   ReleaseDate DATETIME DEFAULT GETDATE(),
+							   ReturnDate DATETIME NULL,
+							   ReleasedBy VARCHAR(100),
+							   ReturnedBy VARCHAR(100));
 
 
