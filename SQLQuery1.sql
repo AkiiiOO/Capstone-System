@@ -18,8 +18,8 @@ SELECT * FROM AccessLevels
 CREATE TABLE Users (UserID INT PRIMARY KEY IDENTITY(1,1),
 					Username VARCHAR(50) UNIQUE NOT NULL,
 					Password VARCHAR(255) NOT NULL, 
-					FirstName VARCHAR(100),
-					LastName VARCHAR(100),
+					FirstName VARCHAR(255),
+					LastName VARCHAR(255),
 					Contact_No Char(11), 
 					SecurityAnswer VARCHAR(255),
 					StatusID INT, 
@@ -473,14 +473,29 @@ INSERT INTO InterestRate (InterestRate) VALUES (5.00);
 
 SELECT * FROM InterestRate
 
+
+CREATE TABLE Employees (EmployeeID INT IDENTITY(1,1) PRIMARY KEY,
+						FirstName VARCHAR(255) ,
+						LastName VARCHAR(255) ,
+						Contact_No CHAR(11) ,
+						HireDate DATE );
+INSERT INTO Employees (FirstName, LastName, Contact_No, HireDate)
+VALUES 
+('John', 'Ken',  '09171234567', '2024-11-21'),
+('Jaymar', 'Ding', '09181234567', '2023-06-15');
+SELECT * FROM Employees
+
+
 --wag muna 
 CREATE TABLE EquipmentRelease (EquipmentReleaseID INT IDENTITY(1,1) PRIMARY KEY,
-							   ServiceRequestID INT FOREIGN KEY REFERENCES ServiceRequests(ServiceRequestID),
-							   EquipmentID INT FOREIGN KEY REFERENCES Equipment(EquipmentID),
-							   Quantity INT NOT NULL,
-							   ReleaseDate DATETIME DEFAULT GETDATE(),
-							   ReturnDate DATETIME NULL,
-							   ReleasedBy VARCHAR(100),
-							   ReturnedBy VARCHAR(100));
+								ServiceRequestID INT FOREIGN KEY REFERENCES ServiceRequests(ServiceRequestID),
+								EquipmentStatusID INT FOREIGN KEY REFERENCES EquipmentStatus(EquipmentStatusID),
+								EquipmentID INT FOREIGN KEY REFERENCES Equipment(EquipmentID),
+								Quantity INT NOT NULL,
+								ReleaseDate DATETIME DEFAULT GETDATE(),
+								ReturnDate DATETIME NULL,
+								ReleasedBy VARCHAR(100),
+								ReturnedBy VARCHAR(100));
 
+SELECT * FROM EquipmentRelease
 
