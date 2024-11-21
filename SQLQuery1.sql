@@ -61,6 +61,7 @@ CREATE TABLE Clients (ClientID INT IDENTITY(1,1) PRIMARY KEY,
 SELECT * FROM Clients
 
 --FOr the casket
+--maintenance
 CREATE TABLE CasketType (CasketTypeID INT IDENTITY(1,1) PRIMARY KEY,
 						 CasketTypeName VARCHAR(50));
 
@@ -79,6 +80,7 @@ INSERT INTO Casket (CasketTypeID, CasketImage, CasketName, Price)VALUES (1, NULL
 SELECT * FROM Casket
 												
 --For the Vehicle
+--maintenance
 CREATE TABLE VehicleType (VehicleTypeID INT IDENTITY(1,1) PRIMARY KEY,
 						  VehicleTypeName VARCHAR(50));
 						  
@@ -96,6 +98,7 @@ INSERT INTO Vehicle (VehicleTypeID, VehicleImage, VehicleName, Price) VALUES (1,
 																			 (2, NULL, 'car2', 150.00);
 SELECT * FROM Vehicle		  
 -- For the Flower Arrangement
+--maintenance
 CREATE TABLE FlowerArrangementsType (ArrangementTypeID INT IDENTITY(1,1) PRIMARY KEY,
 									 ArrangementTypeName VARCHAR(100));
 									 
@@ -141,6 +144,7 @@ CREATE TABLE PlaylistSongs (PlaylistSongsID INT IDENTITY(1,1) PRIMARY KEY,
 SELECT * FROM PlaylistSongs
 
 -- embalming price
+--maintenance
 CREATE TABLE EmbalmingPrice (EmbalmingPriceId INT PRIMARY KEY IDENTITY(1,1),
 							 IncludedDays INT NOT NULL,
 							 BasePrice DECIMAL(18, 2) NOT NULL,
@@ -150,6 +154,7 @@ INSERT INTO EmbalmingPrice (IncludedDays, BasePrice, AdditionalDayCharge)VALUES
 							(4, 2000.00, 4000.00);
 SELECT * FROM EmbalmingPrice
 
+--maintencnce
 CREATE TABLE Equipment (EquipmentID INT IDENTITY(1,1) PRIMARY KEY,
 						EquipmentName VARCHAR(200),
 						EquipmentType VARCHAR(100),
@@ -254,6 +259,7 @@ INSERT INTO ServiceStatus (StatusName) VALUES ('Pending'),
 											  ('Cancelled');
 SELECT * FROM ServiceStatus
 
+--maintenance
 CREATE TABLE Cemeteries (CemeteryID INT IDENTITY(1,1) PRIMARY KEY,
 						 CemeteryName VARCHAR(200) NOT NULL,
 						 Location VARCHAR(250),
@@ -262,6 +268,7 @@ CREATE TABLE Cemeteries (CemeteryID INT IDENTITY(1,1) PRIMARY KEY,
 INSERT INTO Cemeteries (CemeteryName, Location, CreatedBy) VALUES ('Tarlac Cemetery', 'Tarlac City', 'Admin'),
 																  ('Tarlac Cemetery 2', 'Tarlac city', 'Admin');
 
+--maintenance
 CREATE TABLE Chapel (ChapelID INT IDENTITY(1,1) PRIMARY KEY,
 					 ChapelName VARCHAR(100) NOT NULL,
 					 Capacity INT,
@@ -294,6 +301,7 @@ CREATE TABLE ChapelReservation (ReservationID INT IDENTITY(1,1) PRIMARY KEY,
 								DateCreated DATETIME DEFAULT GETDATE());
 SELECT * FROM ChapelReservation
 
+--maintenance
 CREATE TABLE Discounts (DiscountID INT IDENTITY(1,1) PRIMARY KEY,
 						DiscountName VARCHAR(100) NOT NULL,       
 						DiscountRate DECIMAL(5, 2) NOT NULL,      
@@ -308,8 +316,7 @@ CREATE TABLE EquipmentStatus (EquipmentStatusID INT IDENTITY(1,1) PRIMARY KEY,
 INSERT INTO EquipmentStatus (StatusName) VALUES ('Pending'),
 												('Reserved'), 
 												('Released'), 
-												('Returned'), 
-												('Damaged');
+												('Returned');
 SELECT * FROM EquipmentStatus
 
 -- fixing
@@ -403,6 +410,7 @@ INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('Paid');
 INSERT INTO PaymentStatus (PaymentStatusName) VALUES ('OverDue');
 SELECT * FROM PaymentStatus
 
+--maintenance
 CREATE TABLE InstallmentPlans (InstallmentPlanID INT IDENTITY(1,1) PRIMARY KEY,
 							   PlanName VARCHAR(50) NOT NULL,         
 							   NumberOfPayments INT NOT NULL,        
@@ -464,7 +472,7 @@ CREATE TABLE PaymentServiceRequests (PaymentServiceRequestID INT IDENTITY(1,1) P
 SELECT * FROM PaymentServiceRequests
 
 
-
+--maintenance
 CREATE TABLE InterestRate (InterestRateID INT IDENTITY(1,1) PRIMARY KEY,
 						   InterestRate DECIMAL(5, 2) NOT NULL ,
 							LastUpdated DATETIME DEFAULT GETDATE());
@@ -473,7 +481,7 @@ INSERT INTO InterestRate (InterestRate) VALUES (5.00);
 
 SELECT * FROM InterestRate
 
-
+--maintenance
 CREATE TABLE Employees (EmployeeID INT IDENTITY(1,1) PRIMARY KEY,
 						FirstName VARCHAR(255) ,
 						LastName VARCHAR(255) ,
