@@ -152,7 +152,7 @@ CREATE TABLE Equipment (EquipmentID INT IDENTITY(1,1) PRIMARY KEY,
 INSERT INTO Equipment (EquipmentName, EquipmentType, EquipmentQualityID, EquipmentConditionID, Quantity, DamageNote) VALUES
 						('Religion Stand Board', 'Stand', 1, 1, 10, NULL),
 						('Lights Silver', 'Light', 2, 2, 5, NULL),
-						('Casket Stand', 'Casket Stand', 3, 1, 20, 'Minor damage from usage');
+						('Casket Stand', 'Casket Stand', 3, 1, 20, NULL);
 SELECT * FROM Equipment
 
 --FOr PAckages
@@ -294,7 +294,9 @@ CREATE TABLE EquipmentStatus (EquipmentStatusID INT IDENTITY(1,1) PRIMARY KEY,
 INSERT INTO EquipmentStatus (StatusName) VALUES ('Pending'),
 												('Reserved'), 
 												('Released'), 
-												('Returned');
+												('Returned'),
+												('Damaged');
+
 SELECT * FROM EquipmentStatus
 
 -- fixing
@@ -483,3 +485,22 @@ CREATE TABLE EquipmentRelease (EquipmentReleaseID INT IDENTITY(1,1) PRIMARY KEY,
 								ReleasedBy VARCHAR(100),
 								ReturnedBy VARCHAR(100));
 SELECT * FROM EquipmentRelease
+
+CREATE TABLE DamageStatus (DamageStatusID INT IDENTITY(1,1) PRIMARY KEY,
+							StatusName VARCHAR(100) NOT NULL);
+
+-- Insert default statuses
+INSERT INTO DamageStatus (StatusName) VALUES ('Pending'), 
+										     ('Under Repair'), 
+										     ('Repaired'), 
+										     ('Disposed');
+
+
+CREATE TABLE DamageEquipment (DamageEquipmentID INT IDENTITY(1,1) PRIMARY KEY,
+							  ServiceRequestID INT FOREIGN KEY REFERENCES ServiceRequests(ServiceRequestID) ON DELETE SET NULL,
+							  EquipmentStatusID INT FOREIGN KEY REFERENCES EquipmentStatus(EquipmentStatusID),
+							  DamageStatusID INT FOREIGN KEY REFERENCES DamageStatus(DamageStatusID),
+							  EquipmentID INT FOREIGN KEY REFERENCES Equipment(EquipmentID),
+							  Quantity INT NOT NULL,
+							  DamageNote VARCHAR(MAX) NULL);
+SELECT * FROM DamageEquipment
