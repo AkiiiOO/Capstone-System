@@ -66,7 +66,7 @@ CREATE TABLE CasketType (CasketTypeID INT IDENTITY(1,1) PRIMARY KEY,
 						 CasketTypeName VARCHAR(50));
 
 INSERT INTO CasketType (CasketTypeName) VALUES ('Ordinary'),
-											  ('Semi-ordinary'),
+											  ('Semi-Imported'),
 											  ('First-class ');
 SELECT * FROM CasketType
 
