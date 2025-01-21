@@ -29,7 +29,7 @@ SELECT * FROM Users
 
 --Users
 INSERT INTO Users (Username, Password, FirstName, LastName, Contact_No, SecurityAnswer, StatusID, CreatedDate)
-VALUES ('admin', 'admin', 'John', 'A', '09999999999', 'buggles', 1, GETDATE());
+VALUES ('admin', 'admin', 'admin', 'A', '09999999999', 'buggles', 1, GETDATE());
 
 CREATE TABLE UserAccessLevels (UserAccessLevelID INT PRIMARY KEY IDENTITY(1,1),
 							   UserID INT FOREIGN KEY REFERENCES Users(UserID)ON DELETE CASCADE,
@@ -75,16 +75,15 @@ CREATE TABLE Casket (CasketID INT IDENTITY(1,1) PRIMARY KEY,
 					 CasketImage IMAGE,
 					 CasketName VARCHAR(100),
 					 Price DECIMAL(10, 2));	
-INSERT INTO Casket (CasketTypeID, CasketImage, CasketName, Price)VALUES (1, NULL, 'Classic Oak Casket', 600.00),
-																		(2, NULL, 'Stainless Steel Casket', 900.00);
 SELECT * FROM Casket	 									
 --For the Vehicle
 --maintenance
 CREATE TABLE VehicleType (VehicleTypeID INT IDENTITY(1,1) PRIMARY KEY,
 						  VehicleTypeName VARCHAR(50));
 						  
-INSERT INTO VehicleType (VehicleTypeName) VALUES ('Hearse'),
-												 ('Van');
+INSERT INTO VehicleType (VehicleTypeName) VALUES ('Ordinary'),
+												 ('Semi-Imported'),
+												 ('First-class ');
 SELECT * FROM VehicleType
 
 CREATE TABLE Vehicle (VehicleID INT IDENTITY(1,1) PRIMARY KEY,
@@ -92,16 +91,15 @@ CREATE TABLE Vehicle (VehicleID INT IDENTITY(1,1) PRIMARY KEY,
 					  VehicleImage IMAGE,
 					  VehicleName VARCHAR(100),
 					  Price DECIMAL(10, 2));
-INSERT INTO Vehicle (VehicleTypeID, VehicleImage, VehicleName, Price) VALUES (1, NULL, 'car1', 250.00),
-																			 (2, NULL, 'car2', 150.00);
 SELECT * FROM Vehicle		  
 -- For the Flower Arrangement
 --maintenance
 CREATE TABLE FlowerArrangementsType (ArrangementTypeID INT IDENTITY(1,1) PRIMARY KEY,
 									 ArrangementTypeName VARCHAR(100));
 									 
-INSERT INTO FlowerArrangementsType (ArrangementTypeName)VALUES ('Bouquet'),
-															   ('Wreath');
+INSERT INTO FlowerArrangementsType (ArrangementTypeName)VALUES ('Ordinary'),
+															   ('Semi-Imported'),
+															   ('First-class ');
 									 
 CREATE TABLE FlowerArrangements (ArrangementID INT IDENTITY(1,1) PRIMARY KEY,
 							 	 ArrangementTypeID INT FOREIGN KEY REFERENCES FlowerArrangementsType(ArrangementTypeID),
@@ -109,8 +107,6 @@ CREATE TABLE FlowerArrangements (ArrangementID INT IDENTITY(1,1) PRIMARY KEY,
 							 	 ArrangementName VARCHAR(200),
 								 Price DECIMAL(10, 2));
 								 
-INSERT INTO FlowerArrangements (ArrangementTypeID, ArrangementImage, ArrangementName, Price) VALUES (1, NULL, 'White Sympathy Floor', 45.00),
-																								    (2, NULL, 'Tulip Centerpiece', 55.00);
 SELECT * FROM FlowerArrangements
 
 -- embalming price
@@ -149,10 +145,6 @@ CREATE TABLE Equipment (EquipmentID INT IDENTITY(1,1) PRIMARY KEY,
 						DamageNote VARCHAR(Max),
 						CreatedDate DATETIME DEFAULT GETDATE());
 						
-INSERT INTO Equipment (EquipmentName, EquipmentType, EquipmentQualityID, EquipmentConditionID, Quantity, DamageNote) VALUES
-						('Religion Stand Board', 'Stand', 1, 1, 10, NULL),
-						('Lights Silver', 'Light', 2, 2, 5, NULL),
-						('Casket Stand', 'Casket Stand', 3, 1, 20, NULL);
 SELECT * FROM Equipment
 
 --FOr PAckages
@@ -167,8 +159,6 @@ CREATE TABLE Package (PackageID INT IDENTITY(1,1) PRIMARY KEY,
 					  CreatedDate DATETIME DEFAULT GETDATE());
 SELECT * FROM Package
 
-INSERT INTO Package (PackageName, CasketID, VehicleID, CasketName, VehicleName, EmbalmingDays, TotalPrice) VALUES 
-					('Premium Package', 1, 1, 'Classic Oak Casket', 'Luxury Hearse', 9, 1000.00);
 
 
 CREATE TABLE PackageFlowerArrangements (PackageFlowerArrangementID INT IDENTITY(1,1) PRIMARY KEY,
@@ -243,8 +233,6 @@ CREATE TABLE Cemeteries (CemeteryID INT IDENTITY(1,1) PRIMARY KEY,
 						 Location VARCHAR(250),
 						 CreatedBy VARCHAR(250),
 						 CreationDate DATETIME DEFAULT GETDATE());
-INSERT INTO Cemeteries (CemeteryName, Location, CreatedBy) VALUES ('Tarlac Cemetery', 'Tarlac City', 'Admin'),
-																  ('Tarlac Cemetery 2', 'Tarlac city', 'Admin');
 
 --maintenance
 CREATE TABLE Chapel (ChapelID INT IDENTITY(1,1) PRIMARY KEY,
@@ -252,9 +240,6 @@ CREATE TABLE Chapel (ChapelID INT IDENTITY(1,1) PRIMARY KEY,
 					 Capacity INT,
 					 Location VARCHAR(200),
 					 Price DECIMAL(10, 2));
-
-INSERT INTO Chapel (ChapelName, Capacity, Location, Price)	VALUES ('Chapel 1', 100, 'dito', 4000.00),
-														   ('Chapel 2', 50, 'dyan', 4000.00); 
 SELECT * FROM Chapel
 
 
@@ -284,8 +269,6 @@ CREATE TABLE Discounts (DiscountID INT IDENTITY(1,1) PRIMARY KEY,
 						DiscountName VARCHAR(100) NOT NULL,       
 						DiscountRate DECIMAL(5, 2) NOT NULL,      
 						CreatedAt DATETIME DEFAULT GETDATE());
-
-INSERT INTO Discounts (DiscountName, DiscountRate) VALUES ('Senior Citizen Discount', 10.00);
 
 SELECT * FROM Discounts
 CREATE TABLE EquipmentStatus (EquipmentStatusID INT IDENTITY(1,1) PRIMARY KEY,
@@ -396,10 +379,6 @@ CREATE TABLE InstallmentPlans (InstallmentPlanID INT IDENTITY(1,1) PRIMARY KEY,
 							   NumberOfPayments INT NOT NULL,        
 							   PaymentInterval VARCHAR(50) NOT NULL);
 							   
-INSERT INTO InstallmentPlans (PlanName, NumberOfPayments, PaymentInterval)VALUES
-							 ('2 Payments (Monthly)', 2, 'Monthly'),
-							 ('4 Payments (Monthly)', 4, 'Monthly'),
-							 ('6 Payments (Monthly)', 6, 'Monthly');
 
 SELECT * FROM InstallmentPlans
 
@@ -467,10 +446,7 @@ CREATE TABLE Employees (EmployeeID INT IDENTITY(1,1) PRIMARY KEY,
 						LastName VARCHAR(255) ,
 						Contact_No CHAR(11) ,
 						HireDate DATE );
-INSERT INTO Employees (FirstName, LastName, Contact_No, HireDate)
-VALUES 
-('John', 'asd',  '09171234567', '2024-11-21'),
-('asd', 'asd', '09181234567', '2023-06-15');
+
 SELECT * FROM Employees
 
 
